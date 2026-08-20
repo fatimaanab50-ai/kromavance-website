@@ -1,0 +1,13 @@
+{
+  "items": [
+    { "name": "Botanical Alchemy", "category": "Skincare / Packaging", "image": "assets/img/botanical-alchemy-skincare-packaging-des.jpg", "alt": "Botanical Alchemy skincare packaging design by Kroma Vance" },
+    { "name": "Sleep Aura", "category": "Bedding & Home Textiles", "image": "assets/img/sleep-aura.jpg", "alt": "Sleep Aura bedding and home textiles logo by Kroma Vance" },
+    { "name": "Aura Tech", "category": "Tech / SaaS Branding", "image": "assets/img/aura-tech.jpg", "alt": "Aura Tech SaaS branding identity by Kroma Vance" },
+    { "name": "Aethelred Consulting", "category": "Consulting / Advisory", "image": "assets/img/aethelred.jpg", "alt": "Aethelred Consulting advisory brand identity by Kroma Vance" },
+    { "name": "UJG", "category": "Logo & Identity", "image": "assets/img/ujg.jpg", "alt": "UJG logo and identity design by Kroma Vance" },
+    { "name": "Delivery Co", "category": "Logo & Identity", "image": "assets/img/delivery-co.jpg", "alt": "Delivery Co logo and identity design by Kroma Vance" },
+    { "name": "Aura AI", "category": "Tech / AI Branding", "image": "assets/img/aura-ai-intelligent-solutions-brand-conc.jpg", "alt": "Aura AI intelligent solutions brand concept by Kroma Vance" },
+    { "name": "Aethelred Studio", "category": "Architecture / Wordmark", "image": "assets/img/aethelred-experimental-architecture-word.jpg", "alt": "Aethelred experimental architecture wordmark by Kroma Vance" },
+    { "name": "Motion & Print", "category": "Editorial / Poster", "image": "assets/img/editorial-poster-illustration-design-by-.jpg", "alt": "Editorial poster illustration design by Kroma Vance" }
+  ]
+}

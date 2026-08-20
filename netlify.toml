@@ -1,0 +1,23 @@
+# Netlify deploy config for the Kroma Vance static site.
+# This is a plain HTML/CSS/JS site — no build step needed.
+
+[build]
+  publish = "."
+
+# Netlify Forms are auto-detected from the `netlify` / `data-netlify="true"`
+# attributes already on the <form> tags in index.html. Nothing else to
+# configure here — submissions will show up under
+# Site settings > Forms once this is deployed.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Custom 404 page
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404

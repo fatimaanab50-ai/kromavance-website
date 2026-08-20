@@ -1,0 +1,50 @@
+{
+  "section_eyebrow": "Pricing",
+  "section_title": "Simple Pricing, No Surprises",
+  "section_intro": "These cover most projects. Got something bigger or a little different in mind? Just ask and we'll figure out a fair price together.",
+  "tiers": [
+    {
+      "badge": "Logo Only",
+      "amount": "$150",
+      "cadence": "one-time · 5–7 day delivery",
+      "featured": false,
+      "features": [
+        "Primary logo + 1 alternate lockup",
+        "Color palette with usage notes",
+        "2 concept directions, 2 revision rounds",
+        "Source files: AI, EPS, PNG, PDF"
+      ],
+      "cta_text": "Start with Essential Logo",
+      "scope_value": "Logo Only"
+    },
+    {
+      "badge": "Most Popular",
+      "amount": "$350",
+      "cadence": "one-time · 2–3 week delivery",
+      "featured": true,
+      "features": [
+        "Everything in Logo Only",
+        "Brand guidelines document",
+        "Business card & basic stationery",
+        "Social media profile kit",
+        "3 concept directions, unlimited minor revisions"
+      ],
+      "cta_text": "Start with Full Brand Identity",
+      "scope_value": "Full Brand Identity"
+    },
+    {
+      "badge": "Ongoing",
+      "amount": "From $120/mo",
+      "cadence": "ongoing design partnership",
+      "featured": false,
+      "features": [
+        "Everything in Full Brand Identity",
+        "Monthly design requests (social, promo graphics)",
+        "Priority turnaround",
+        "Direct WhatsApp line, wherever you are"
+      ],
+      "cta_text": "Start with Design Partner",
+      "scope_value": "Ongoing Partner"
+    }
+  ]
+}

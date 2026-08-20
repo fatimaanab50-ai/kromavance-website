@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kroma Vance — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/jpeg" href="../assets/img/kroma-vance.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF9F5; --paper-dim:#F3EFE7; --ink:#18140F; --muted:#716A5C;
+    --line:#E6E0D3; --violet:#4B2E83; --violet-tint:#EFE9F9; --violet-deep:#33205C;
+    --cta:#C08A2E; --cta-deep:#9C6E20; --card:#FFFFFF; --radius:16px;
+    --danger:#B4432F; --danger-tint:#FBEAE6;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; letter-spacing:-.01em;}
+  button{font-family:'Space Grotesk',sans-serif; cursor:pointer; border:none;}
+  input,textarea{font-family:'Inter',sans-serif;}
+
+  /* ---------- LOGIN SCREEN ---------- */
+  #loginScreen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .login-card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:48px 40px; max-width:380px; width:100%; text-align:center; box-shadow:0 30px 60px -30px rgba(24,20,15,.2);}
+  .login-card .mark{width:52px; height:52px; border-radius:14px; margin:0 auto 22px; overflow:hidden;}
+  .login-card .mark img{width:100%; height:100%; object-fit:cover;}
+  .login-card h1{font-size:24px; margin-bottom:8px;}
+  .login-card p{color:var(--muted); font-size:14.5px; margin-bottom:28px;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--cta); color:#fff; font-weight:600; font-size:14.5px; padding:14px 24px; border-radius:999px; transition:all .2s ease; width:100%;}
+  .btn:hover{background:var(--cta-deep); transform:translateY(-1px);}
+  .btn:active{transform:scale(.98);}
+  .btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  .btn.ghost:hover{background:var(--paper-dim);}
+  .btn.danger{background:var(--danger);}
+  .btn.danger:hover{background:#8f3624;}
+  .btn.small{width:auto; padding:9px 16px; font-size:13px;}
+
+  /* ---------- APP SHELL ---------- */
+  #app{display:none; min-height:100vh; grid-template-columns:250px 1fr;}
+  #app.show{display:grid;}
+  .sidebar{background:var(--ink); color:#fff; padding:28px 20px; display:flex; flex-direction:column;}
+  .sidebar .brand{display:flex; align-items:center; gap:10px; margin-bottom:36px;}
+  .sidebar .brand .mark{width:32px; height:32px; border-radius:8px; overflow:hidden; flex-shrink:0;}
+  .sidebar .brand .mark img{width:100%; height:100%; object-fit:cover;}
+  .sidebar .brand span{font-family:'Fraunces',serif; font-weight:600; font-size:16px;}
+  .nav-item{display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; color:#C9C2B8; font-size:14.5px; font-weight:500; cursor:pointer; transition:all .15s ease; margin-bottom:4px;}
+  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .nav-item.active{background:var(--cta); color:#fff;}
+  .nav-item .dot{width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.5; flex-shrink:0;}
+  .sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,.1);}
+  .sidebar-foot .who{font-size:12.5px; color:#9B9384; margin-bottom:12px; word-break:break-all;}
+
+  .main{padding:40px 48px; overflow-y:auto; max-height:100vh;}
+  .main-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; gap:20px; flex-wrap:wrap;}
+  .main-head h2{font-size:26px;}
+  .main-head p{color:var(--muted); font-size:14px; margin-top:4px;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; margin-bottom:20px;}
+  .card h3{font-size:16px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--paper-dim);}
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block; font-family:'Space Grotesk',sans-serif; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:7px;}
+  .field input, .field textarea{
+    width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+    font-size:14.5px; color:var(--ink); background:var(--paper); transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--cta); box-shadow:0 0 0 3px rgba(192,138,46,.13);}
+  .field textarea{resize:vertical; min-height:80px;}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+
+  .save-bar{position:sticky; bottom:0; background:var(--paper); padding:16px 0 4px; display:flex; align-items:center; gap:14px; border-top:1px solid var(--line); margin-top:8px;}
+  .save-bar .btn{width:auto; padding:13px 28px;}
+  .save-status{font-size:13px; color:var(--muted);}
+  .save-status.ok{color:#3E7D4E;}
+  .save-status.err{color:var(--danger);}
+
+  .item-card{border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:14px; background:var(--card);}
+  .item-card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .item-card-head .idx{font-family:'Fraunces',serif; color:var(--cta); font-size:13px;}
+  .icon-btn{width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--paper-dim); color:var(--muted); transition:all .15s ease; font-size:16px;}
+  .icon-btn:hover{background:var(--danger-tint); color:var(--danger);}
+  .thumb-row{display:flex; align-items:center; gap:14px; margin-bottom:14px;}
+  .thumb-row img{width:64px; height:64px; object-fit:cover; border-radius:10px; border:1px solid var(--line); background:var(--paper-dim);}
+  .thumb-row .file-btn{font-size:13px; color:var(--violet); font-weight:600; cursor:pointer;}
+  .thumb-row input[type=file]{display:none;}
+  .feature-row{display:flex; gap:8px; margin-bottom:8px;}
+  .feature-row input{flex:1;}
+  .add-row-btn{font-size:13px; color:var(--violet); font-weight:600; margin-top:6px; cursor:pointer;}
+  .toggle-row{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .toggle-row input{width:auto;}
+
+  .empty-note{font-size:13.5px; color:var(--muted); text-align:center; padding:30px 0;}
+  .spinner{width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-veil{position:fixed; inset:0; background:var(--paper); display:flex; align-items:center; justify-content:center; z-index:99; flex-direction:column; gap:14px;}
+  .loading-veil .spinner{border-color:rgba(75,46,131,.2); border-top-color:var(--violet); width:26px; height:26px; border-width:3px;}
+  .loading-veil p{color:var(--muted); font-size:14px;}
+
+  @media (max-width:820px){
+    #app.show{display:flex; flex-direction:column;}
+    .sidebar{flex-direction:row; align-items:center; padding:16px 20px; overflow-x:auto;}
+    .sidebar .brand{margin-bottom:0; margin-right:16px;}
+    .sidebar-foot{display:none;}
+    .nav-item{white-space:nowrap;}
+    .main{padding:24px 20px;}
+    .grid-2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-veil" id="loadingVeil">
+  <div class="spinner"></div>
+  <p>Loading admin panel&hellip;</p>
+</div>
+
+<div id="loginScreen" style="display:none;">
+  <div class="login-card">
+    <div class="mark"><img src="../assets/img/kroma-vance.jpg" alt="Kroma Vance"></div>
+    <h1>Kroma Vance Admin</h1>
+    <p>Sign in to edit your website's text, portfolio, and pricing — no code required.</p>
+    <button class="btn" id="loginBtn">Sign In</button>
+    <p style="margin-top:16px; font-size:12.5px;">Don't have an invite yet? Ask your developer to send one.</p>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar">
+    <div class="brand">
+      <div class="mark"><img src="../assets/img/kroma-vance.jpg" alt="Kroma Vance"></div>
+      <span>Admin</span>
+    </div>
+    <div class="nav-item active" data-panel="settings"><span class="dot"></span> Site Settings</div>
+    <div class="nav-item" data-panel="portfolio"><span class="dot"></span> Portfolio</div>
+    <div class="nav-item" data-panel="pricing"><span class="dot"></span> Pricing</div>
+    <div class="sidebar-foot">
+      <div class="who" id="whoAmI">&nbsp;</div>
+      <button class="btn ghost small" id="viewSiteBtn" style="width:100%; margin-bottom:8px; color:#fff; border-color:rgba(255,255,255,.2);">View Live Site</button>
+      <button class="btn ghost small" id="logoutBtn" style="width:100%; color:#fff; border-color:rgba(255,255,255,.2);">Log Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="panel" id="panel-settings">
+      <div class="main-head">
+        <div>
+          <h2>Site Settings</h2>
+          <p>Hero, About, footer, contact links, and payment details.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Hero Section</h3>
+        <div class="field"><label>Eyebrow (small line above headline)</label><input type="text" data-key="hero_eyebrow"></div>
+        <div class="field"><label>Headline</label><input type="text" data-key="hero_title"></div>
+        <div class="field"><label>Subtitle</label><textarea data-key="hero_lead"></textarea></div>
+        <div class="grid-2">
+          <div class="field"><label>Badge — Stat</label><input type="text" data-key="hero_badge_stat"></div>
+          <div class="field"><label>Badge — Line 2</label><input type="text" data-key="hero_badge_line2"></div>
+        </div>
+        <div class="field"><label>Badge — Line 1</label><input type="text" data-key="hero_badge_line1"></div>
+        <div class="grid-2">
+          <div class="field"><label>Primary Button Text</label><input type="text" data-key="hero_cta_primary"></div>
+          <div class="field"><label>Secondary Button Text</label><input type="text" data-key="hero_cta_secondary"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>About Section</h3>
+        <div class="grid-2">
+          <div class="field"><label>Eyebrow</label><input type="text" data-key="about_eyebrow"></div>
+          <div class="field"><label>Title</label><input type="text" data-key="about_title"></div>
+        </div>
+        <div class="field"><label>Paragraph 1</label><textarea data-key="about_paragraph_1"></textarea></div>
+        <div class="field"><label>Paragraph 2</label><textarea data-key="about_paragraph_2"></textarea></div>
+      </div>
+
+      <div class="card">
+        <h3>Contact &amp; Social</h3>
+        <div class="grid-2">
+          <div class="field"><label>Email</label><input type="text" data-key="contact_email"></div>
+          <div class="field"><label>Phone (with country code)</label><input type="text" data-key="contact_phone"></div>
+        </div>
+        <div class="field"><label>WhatsApp Number (digits only)</label><input type="text" data-key="whatsapp_number"></div>
+        <div class="grid-2">
+          <div class="field"><label>Instagram URL</label><input type="text" data-key="social_instagram"></div>
+          <div class="field"><label>Facebook URL</label><input type="text" data-key="social_facebook"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>TikTok URL</label><input type="text" data-key="social_tiktok"></div>
+          <div class="field"><label>YouTube URL</label><input type="text" data-key="social_youtube"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Footer Tagline</h3>
+        <div class="field"><textarea data-key="footer_tagline"></textarea></div>
+      </div>
+
+      <div class="card">
+        <h3>Payment Details</h3>
+        <div class="field"><label>Payment Policy Text</label><textarea data-key="payment_policy"></textarea></div>
+        <div class="grid-2">
+          <div class="field"><label>Bank Name</label><input type="text" data-key="bank_name"></div>
+          <div class="field"><label>Account Title</label><input type="text" data-key="bank_account_title"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>Account Number</label><input type="text" data-key="bank_account_number"></div>
+          <div class="field"><label>IBAN</label><input type="text" data-key="bank_iban"></div>
+        </div>
+        <div class="field"><label>Branch</label><input type="text" data-key="bank_branch"></div>
+        <div class="grid-2">
+          <div class="field"><label>JazzCash Number</label><input type="text" data-key="jazzcash_number"></div>
+          <div class="field"><label>JazzCash Account Name</label><input type="text" data-key="jazzcash_name"></div>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn" style="width:auto;" id="saveSettingsBtn">Save Changes</button>
+        <span class="save-status" id="settingsStatus"></span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-portfolio" style="display:none;">
+      <div class="main-head">
+        <div>
+          <h2>Portfolio</h2>
+          <p>Add, edit, remove, or reorder the project cards shown on your homepage.</p>
+        </div>
+        <button class="btn small" style="width:auto;" id="addProjectBtn">+ Add Project</button>
+      </div>
+      <div id="portfolioList"></div>
+      <div class="save-bar">
+        <button class="btn" style="width:auto;" id="savePortfolioBtn">Save Changes</button>
+        <span class="save-status" id="portfolioStatus"></span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-pricing" style="display:none;">
+      <div class="main-head">
+        <div>
+          <h2>Pricing</h2>
+          <p>Your pricing section heading and the three package tiers.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Section Text</h3>
+        <div class="grid-2">
+          <div class="field"><label>Eyebrow</label><input type="text" data-key="section_eyebrow"></div>
+          <div class="field"><label>Title</label><input type="text" data-key="section_title"></div>
+        </div>
+        <div class="field"><label>Intro</label><textarea data-key="section_intro"></textarea></div>
+      </div>
+      <div id="pricingList"></div>
+      <button class="btn small ghost" style="width:auto;" id="addTierBtn">+ Add Tier</button>
+      <div class="save-bar">
+        <button class="btn" style="width:auto;" id="savePricingBtn">Save Changes</button>
+        <span class="save-status" id="pricingStatus"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+(function(){
+  const GATEWAY = window.location.origin + '/.netlify/git/github/contents/';
+  const BRANCH = 'main';
+  let currentUser = null;
+  let shaCache = {};
+
+  const loadingVeil = document.getElementById('loadingVeil');
+  const loginScreen = document.getElementById('loginScreen');
+  const app = document.getElementById('app');
+
+  function showLogin(){
+    loadingVeil.style.display = 'none';
+    loginScreen.style.display = 'flex';
+    app.classList.remove('show');
+  }
+  function showApp(user){
+    currentUser = user;
+    document.getElementById('whoAmI').textContent = user.email || '';
+    loadingVeil.style.display = 'none';
+    loginScreen.style.display = 'none';
+    app.classList.add('show');
+    initPanels();
+  }
+
+  netlifyIdentity.on('init', user => { if (user) showApp(user); else showLogin(); });
+  netlifyIdentity.on('login', user => { netlifyIdentity.close(); showApp(user); });
+  netlifyIdentity.on('logout', () => showLogin());
+  netlifyIdentity.init();
+
+  document.getElementById('loginBtn').addEventListener('click', () => netlifyIdentity.open('login'));
+  document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
+  document.getElementById('viewSiteBtn').addEventListener('click', () => window.open('/', '_blank'));
+
+  async function authHeader(){
+    const token = await currentUser.jwt();
+    return { 'Authorization': 'Bearer ' + token };
+  }
+
+  async function getFile(path){
+    const res = await fetch(GATEWAY + path + '?ref=' + BRANCH, { headers: await authHeader() });
+    if (!res.ok) throw new Error('Could not load ' + path + ' (' + res.status + ')');
+    const data = await res.json();
+    shaCache[path] = data.sha;
+    const json = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
+    return json;
+  }
+
+  async function putFile(path, obj, message, isBinaryBase64){
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, await authHeader());
+    const content = isBinaryBase64 ? obj : btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
+    const body = { message: message, content: content, branch: BRANCH };
+    if (shaCache[path]) body.sha = shaCache[path];
+    const res = await fetch(GATEWAY + path, { method: 'PUT', headers, body: JSON.stringify(body) });
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error('Save failed (' + res.status + '): ' + t.slice(0,200));
+    }
+    const data = await res.json();
+    if (data.content) shaCache[path] = data.content.sha;
+    return data;
+  }
+
+  function setStatus(id, msg, cls){
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'save-status' + (cls ? ' ' + cls : '');
+    if (cls === 'ok') setTimeout(() => { el.textContent = ''; }, 3000);
+  }
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+      document.getElementById('panel-' + item.dataset.panel).style.display = 'block';
+    });
+  });
+
+  let settingsData = null, portfolioData = null, pricingData = null;
+  let panelsInitialized = false;
+
+  async function initPanels(){
+    if (panelsInitialized) return;
+    panelsInitialized = true;
+    try {
+      settingsData = await getFile('content/settings.json');
+      Object.keys(settingsData).forEach(key => {
+        const el = document.querySelector('#panel-settings [data-key="' + key + '"]');
+        if (el) el.value = settingsData[key];
+      });
+    } catch(e){ setStatus('settingsStatus', e.message, 'err'); }
+
+    try {
+      portfolioData = await getFile('content/portfolio.json');
+      renderPortfolio();
+    } catch(e){ setStatus('portfolioStatus', e.message, 'err'); }
+
+    try {
+      pricingData = await getFile('content/pricing.json');
+      Object.keys(pricingData).forEach(key => {
+        if (key === 'tiers') return;
+        const el = document.querySelector('#panel-pricing [data-key="' + key + '"]');
+        if (el) el.value = pricingData[key];
+      });
+      renderPricing();
+    } catch(e){ setStatus('pricingStatus', e.message, 'err'); }
+  }
+
+  document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+    document.querySelectorAll('#panel-settings [data-key]').forEach(el => {
+      settingsData[el.dataset.key] = el.value;
+    });
+    setStatus('settingsStatus', 'Saving…');
+    try {
+      await putFile('content/settings.json', settingsData, 'Update site settings via admin panel');
+      setStatus('settingsStatus', 'Saved — live in a minute or two.', 'ok');
+    } catch(e){ setStatus('settingsStatus', e.message, 'err'); }
+  });
+
+  function renderPortfolio(){
+    const list = document.getElementById('portfolioList');
+    if (!portfolioData.items.length){
+      list.innerHTML = '<p class="empty-note">No projects yet — click "Add Project" to create one.</p>';
+      return;
+    }
+    list.innerHTML = '';
+    portfolioData.items.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML =
+        '<div class="item-card-head"><span class="idx">Project ' + (i+1) + '</span>' +
+        '<button class="icon-btn" data-remove="' + i + '" title="Remove">&times;</button></div>' +
+        '<div class="thumb-row">' +
+          '<img src="../' + item.image + '" alt="">' +
+          '<label class="file-btn">Replace Image<input type="file" accept="image/*" data-imgfor="' + i + '"></label>' +
+        '</div>' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Project Name</label><input type="text" value="' + escAttr(item.name) + '" data-field="name" data-i="' + i + '"></div>' +
+          '<div class="field"><label>Category</label><input type="text" value="' + escAttr(item.category) + '" data-field="category" data-i="' + i + '"></div>' +
+        '</div>' +
+        '<div class="field"><label>Alt Text (accessibility &amp; SEO)</label><input type="text" value="' + escAttr(item.alt||'') + '" data-field="alt" data-i="' + i + '"></div>';
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll('[data-field]').forEach(el => {
+      el.addEventListener('input', () => { portfolioData.items[+el.dataset.i][el.dataset.field] = el.value; });
+    });
+    list.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => { portfolioData.items.splice(+btn.dataset.remove, 1); renderPortfolio(); });
+    });
+    list.querySelectorAll('[data-imgfor]').forEach(input => {
+      input.addEventListener('change', async (e) => {
+        const i = +input.dataset.imgfor;
+        const file = e.target.files[0];
+        if (!file) return;
+        setStatus('portfolioStatus', 'Uploading image…');
+        try {
+          const base64 = await fileToBase64(file);
+          const ext = file.name.split('.').pop().toLowerCase();
+          const fname = 'assets/img/upload-' + Date.now() + '.' + ext;
+          await putFile(fname, base64, 'Upload portfolio image via admin panel', true);
+          portfolioData.items[i].image = fname;
+          renderPortfolio();
+          setStatus('portfolioStatus', 'Image uploaded — click Save Changes to publish.', 'ok');
+        } catch(err){ setStatus('portfolioStatus', err.message, 'err'); }
+      });
+    });
+  }
+
+  document.getElementById('addProjectBtn').addEventListener('click', () => {
+    portfolioData.items.push({ name: 'New Project', category: 'Logo & Identity', image: 'assets/img/kroma-vance.jpg', alt: 'New project' });
+    renderPortfolio();
+  });
+
+  document.getElementById('savePortfolioBtn').addEventListener('click', async () => {
+    setStatus('portfolioStatus', 'Saving…');
+    try {
+      await putFile('content/portfolio.json', portfolioData, 'Update portfolio via admin panel');
+      setStatus('portfolioStatus', 'Saved — live in a minute or two.', 'ok');
+    } catch(e){ setStatus('portfolioStatus', e.message, 'err'); }
+  });
+
+  function renderPricing(){
+    const list = document.getElementById('pricingList');
+    list.innerHTML = '';
+    pricingData.tiers.forEach((tier, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      let featuresHtml = (tier.features||[]).map((f, fi) =>
+        '<div class="feature-row"><input type="text" value="' + escAttr(f) + '" data-feat="' + i + ':' + fi + '">' +
+        '<button class="icon-btn" data-featremove="' + i + ':' + fi + '">&times;</button></div>'
+      ).join('');
+      card.innerHTML =
+        '<div class="item-card-head"><span class="idx">Tier ' + (i+1) + '</span>' +
+        '<button class="icon-btn" data-tierremove="' + i + '" title="Remove">&times;</button></div>' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Badge Text</label><input type="text" value="' + escAttr(tier.badge) + '" data-tfield="badge" data-i="' + i + '"></div>' +
+          '<div class="field"><label>Price</label><input type="text" value="' + escAttr(tier.amount) + '" data-tfield="amount" data-i="' + i + '"></div>' +
+        '</div>' +
+        '<div class="grid-2">' +
+          '<div class="field"><label>Cadence</label><input type="text" value="' + escAttr(tier.cadence) + '" data-tfield="cadence" data-i="' + i + '"></div>' +
+          '<div class="field"><label>Button Text</label><input type="text" value="' + escAttr(tier.cta_text) + '" data-tfield="cta_text" data-i="' + i + '"></div>' +
+        '</div>' +
+        '<div class="toggle-row"><input type="checkbox" data-featured="' + i + '" ' + (tier.featured ? 'checked' : '') + '> <label style="margin:0;">Highlight this tier (Most Popular)</label></div>' +
+        '<label style="display:block; font-family:\'Space Grotesk\',sans-serif; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:7px;">Features</label>' +
+        '<div class="feat-list" data-featlist="' + i + '">' + featuresHtml + '</div>' +
+        '<div class="add-row-btn" data-addfeat="' + i + '">+ Add Feature</div>';
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll('[data-tfield]').forEach(el => {
+      el.addEventListener('input', () => { pricingData.tiers[+el.dataset.i][el.dataset.tfield] = el.value; });
+    });
+    list.querySelectorAll('[data-featured]').forEach(el => {
+      el.addEventListener('change', () => { pricingData.tiers[+el.dataset.featured].featured = el.checked; });
+    });
+    list.querySelectorAll('[data-feat]').forEach(el => {
+      el.addEventListener('input', () => {
+        const parts = el.dataset.feat.split(':').map(Number);
+        pricingData.tiers[parts[0]].features[parts[1]] = el.value;
+      });
+    });
+    list.querySelectorAll('[data-featremove]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parts = btn.dataset.featremove.split(':').map(Number);
+        pricingData.tiers[parts[0]].features.splice(parts[1], 1);
+        renderPricing();
+      });
+    });
+    list.querySelectorAll('[data-addfeat]').forEach(btn => {
+      btn.addEventListener('click', () => { pricingData.tiers[+btn.dataset.addfeat].features.push('New feature'); renderPricing(); });
+    });
+    list.querySelectorAll('[data-tierremove]').forEach(btn => {
+      btn.addEventListener('click', () => { pricingData.tiers.splice(+btn.dataset.tierremove, 1); renderPricing(); });
+    });
+  }
+
+  document.getElementById('addTierBtn').addEventListener('click', () => {
+    pricingData.tiers.push({ badge: 'New Tier', amount: '$0', cadence: 'one-time', featured: false, features: ['Feature one'], cta_text: 'Get Started', scope_value: 'Not sure yet' });
+    renderPricing();
+  });
+
+  document.getElementById('savePricingBtn').addEventListener('click', async () => {
+    document.querySelectorAll('#panel-pricing [data-key]').forEach(el => { pricingData[el.dataset.key] = el.value; });
+    setStatus('pricingStatus', 'Saving…');
+    try {
+      await putFile('content/pricing.json', pricingData, 'Update pricing via admin panel');
+      setStatus('pricingStatus', 'Saved — live in a minute or two.', 'ok');
+    } catch(e){ setStatus('pricingStatus', e.message, 'err'); }
+  });
+
+  function escAttr(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+})();
+</script>
+</body>
+</html>
