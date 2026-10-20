@@ -14,7 +14,7 @@ developer needed for day-to-day changes. Here's everything you need.
 
 ## What You'll See
 
-Three sections on the left:
+Five sections on the left:
 
 ### 1. Site Settings
 Everything on the homepage that isn't a portfolio project or a price:
@@ -23,11 +23,39 @@ Everything on the homepage that isn't a portfolio project or a price:
 - Footer text
 - Your email, phone number, and WhatsApp number
 - Your Instagram / Facebook / TikTok / YouTube links
-- Your bank details and JazzCash number (shown on the Payment page)
 
 Click into any field, change the text, done.
 
-### 2. Portfolio
+### 2. Branding & Images
+Replace your favicon, header logo, and the two main photos. Each one
+shows its **required size**, a preview of what's live now, and a
+**Choose new image** button. Whatever you upload is automatically
+cropped (from the centre) and resized to the exact size needed, and
+published straight away.
+
+| Image | Where it appears | Required size | Shape |
+|---|---|---|---|
+| Favicon | Browser tab icon | **512 × 512 px**, PNG | Square |
+| Header Logo | Top-left of the website | **256 × 256 px**, PNG | Square |
+| Hero Image | Top of the homepage | **1200 × 1500 px**, JPG | Portrait (4:5) |
+| About Photo | Your picture in the About section | **1000 × 1000 px**, JPG | Square (1:1) |
+
+Tips:
+- **Hero image:** it's a *tall* picture. A wide (landscape) image gets
+  cropped from the sides, so keep the important part in the centre.
+- **About photo:** it's a *square*. A portrait photo gets cropped top
+  and bottom, so keep your face near the centre with some space above
+  your head.
+- **Favicon:** keep it a simple logo mark with some padding — it
+  displays tiny. Browsers cache favicons, so the old one may linger for
+  a while (try a hard-refresh, or wait a few hours). Google's search
+  results can take days to pick up a new one.
+- If your image is smaller than the required size you'll see a note —
+  it still works, but may look slightly soft.
+- Below the images you can edit their **descriptions** (used by Google
+  and screen readers). Click **Save Descriptions** after editing.
+
+### 3. Portfolio
 Every project card shown on your homepage. You can:
 - **Edit** a project's name, category label, or photo (click "Replace
   Image" under any project's photo to swap it)
@@ -35,12 +63,29 @@ Every project card shown on your homepage. You can:
   in the name, category, and photo
 - **Remove** a project with the &times; button on its card
 
-### 3. Pricing
+### 4. Reviews
+This is how real client reviews get onto your website.
+1. When a client leaves a review through the form on your site, you'll get
+   it by email (or find it in Netlify → Forms).
+2. Open **Reviews → + Add Review**, then type in their name, pick the star
+   rating, and paste in their words (a role or company is optional).
+3. Click **Save Changes**. The review appears on your site in a minute or two
+   in a scrolling "Kind Words From Clients" section with an average rating
+   worked out automatically from the reviews you've added.
+
+Only add reviews from real clients. Until you add the first one, the whole
+Reviews section stays hidden, so there are no empty boxes on the site.
+To remove a review, click the × on its card and save.
+
+### 5. Pricing
 Your three pricing packages. Edit the price, the list of what's
 included, add or remove features, or toggle which package is marked
 "Most Popular."
 
 ## Saving Changes
+
+Image uploads in **Branding & Images** publish immediately when you choose a
+file. Everything else has a **Save Changes** button:
 
 Each section (Site Settings, Portfolio, Pricing) has its own
 **Save Changes** button at the bottom. Click it after you're done

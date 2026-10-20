@@ -33,24 +33,12 @@
     setText('about_paragraph_1', s.about_paragraph_1);
     setText('about_paragraph_2', s.about_paragraph_2);
 
-    setText('footer_tagline', s.footer_tagline);
-    setText('payment_policy', s.payment_policy);
+    var heroImg = document.getElementById('heroImage');
+    if (heroImg && s.hero_image_alt) heroImg.alt = s.hero_image_alt;
+    var aboutImg = document.getElementById('aboutImage');
+    if (aboutImg && s.about_image_alt) aboutImg.alt = s.about_image_alt;
 
-    // Bank + JazzCash details are assembled from separate fields so the
-    // CMS form stays simple (plain text fields, not raw HTML).
-    if (s.bank_name) setText('bank_label', 'Bank Transfer — ' + s.bank_name);
-    var bankEl = document.querySelector('[data-cms="bank_details"]');
-    if (bankEl && s.bank_account_title) {
-      bankEl.innerHTML =
-        'Account Title: ' + s.bank_account_title + '<br>' +
-        'Account No: ' + s.bank_account_number + '<br>' +
-        'IBAN: ' + s.bank_iban + '<br>' +
-        'Branch: ' + s.bank_branch;
-    }
-    var jazzEl = document.querySelector('[data-cms="jazzcash_details"]');
-    if (jazzEl && s.jazzcash_number) {
-      jazzEl.textContent = s.jazzcash_number + ' (' + s.jazzcash_name + ')';
-    }
+    setText('footer_tagline', s.footer_tagline);
 
     // Contact quick-links (WhatsApp / email / phone)
     var wa = document.getElementById('qlWhatsapp');
@@ -108,15 +96,6 @@
         '<div class="meta"><div class="tag">' + item.category + '</div><h4>' + item.name + '</h4></div>' +
         '</div>';
     });
-    // Always keep 3 honest "open slot" cards at the end — see chat history
-    // for why these aren't filled with stock photos.
-    for (var j = 0; j < 3; j++) {
-      var d2 = (((data.items.length + j) % 6) * 0.06).toFixed(2);
-      html += '<div class="case-card add-card reveal" style="transition-delay:' + d2 + 's">' +
-        '<div class="thumb add-thumb"><span class="add-plus">+</span></div>' +
-        '<div class="meta"><div class="tag">Open Slot</div><h4>Add Your Next Project</h4></div>' +
-        '</div>';
-    }
     grid.innerHTML = html;
     // re-observe the freshly-created cards for the scroll-reveal animation
     if (window.__kvObserveReveal) window.__kvObserveReveal();
@@ -148,6 +127,56 @@
     grid.innerHTML = html;
   }
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function starsHtml(n) {
+    n = Math.max(0, Math.min(5, Math.round(Number(n) || 5)));
+    return new Array(n + 1).join('\u2605') + (n < 5 ? '<span class="off">' + new Array(6 - n).join('\u2605') + '</span>' : '');
+  }
+
+  // Real client reviews only (content/reviews.json, edited in the admin panel).
+  // Hidden entirely until at least one review exists. Everything is escaped,
+  // so pasted text can never inject markup into the page.
+  function renderReviews(data) {
+    var sec = document.getElementById('reviews');
+    var wall = document.getElementById('rvWall');
+    if (!sec || !wall || !data) return;
+    setText('reviews_eyebrow', data.section_eyebrow);
+    setText('reviews_title', data.section_title);
+    var items = (data.items || []).filter(function (r) { return r && r.name && r.text; });
+    if (!items.length) { sec.hidden = true; return; }
+
+    var total = items.reduce(function (a, r) { return a + (Math.max(1, Math.min(5, Number(r.rating) || 5))); }, 0);
+    var avg = total / items.length;
+    document.getElementById('ratingSummary').innerHTML =
+      '<div class="score">' + avg.toFixed(1) + '</div>' +
+      '<div class="rstars" aria-label="' + avg.toFixed(1) + ' out of 5">' + starsHtml(avg) + '</div>' +
+      '<div class="count">Based on ' + items.length + (items.length === 1 ? ' client review' : ' client reviews') + '</div>';
+
+    function card(r, dup) {
+      return '<figure class="rv-card' + (dup ? ' rv-dup' : '') + '"' + (dup ? ' aria-hidden="true"' : '') + ' style="margin:0">' +
+        '<div class="rstars" aria-label="' + (Number(r.rating) || 5) + ' out of 5 stars">' + starsHtml(r.rating) + '</div>' +
+        '<blockquote>' + esc(r.text) + '</blockquote>' +
+        '<figcaption class="who"><div class="rv-avatar">' + esc(String(r.name).trim().charAt(0).toUpperCase()) + '</div>' +
+        '<div><div class="rv-name">' + esc(r.name) + '</div>' + (r.role ? '<div class="rv-role">' + esc(r.role) + '</div>' : '') + '</div></figcaption>' +
+        '</figure>';
+    }
+
+    if (items.length < 4) {
+      wall.classList.add('is-grid');
+      wall.innerHTML = '<div class="rv-grid">' + items.map(function (r) { return card(r, false); }).join('') + '</div>';
+    } else {
+      wall.classList.remove('is-grid');
+      var set = items.slice();
+      while (set.length * 362 < 2200) set = set.concat(items); // wide enough that the loop never shows a gap
+      var html = set.map(function (r) { return card(r, false); }).join('') + set.map(function (r) { return card(r, true); }).join('');
+      wall.innerHTML = '<div class="rv-track scroll" style="--rv-dur:' + Math.max(40, set.length * 9) + 's">' + html + '</div>';
+    }
+    sec.hidden = false;
+  }
+  window.__kvRenderReviews = renderReviews;
+
   function loadJSON(path) {
     return fetch(path, { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('Failed to load ' + path);
@@ -161,6 +190,9 @@
     });
     loadJSON('content/portfolio.json').then(renderPortfolio).catch(function (e) {
       console.warn('CMS portfolio not loaded, showing fallback content:', e);
+    });
+    loadJSON('content/reviews.json').then(renderReviews).catch(function (e) {
+      console.warn('CMS reviews not loaded:', e);
     });
     loadJSON('content/pricing.json').then(renderPricing).catch(function (e) {
       console.warn('CMS pricing not loaded, showing fallback content:', e);

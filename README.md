@@ -12,8 +12,8 @@ sitemap.xml          Basic sitemap
 og-image.jpg         Social share preview image (swap for a real banner later)
 assets/
   css/style.css       All site styles
-  js/main.js          FAQ accordion, scroll-reveal animation, reviews
-                       marquee, and the contact form's JS-enhanced submit
+  js/main.js          FAQ accordion, scroll-reveal animation,
+                       and the contact form's JS-enhanced submit
   img/                All photos/logos used on the site, real files
                        (no more base64-embedded images)
 ```
@@ -58,9 +58,17 @@ only the interface changed.
 
 ```
 content/
-  settings.json    Hero, About, footer, contact links, bank/JazzCash details
+  settings.json    Hero, About, footer, contact links
   portfolio.json   All portfolio project cards (add/remove/reorder freely)
   pricing.json     The 3 pricing tiers and their features
+assets/img/
+  favicon.png      512x512 — browser tab icon (all pages point at this file)
+  header-logo.png  256x256 — logo in the top menu and admin panel
+  hero.jpg         1200x1500 (4:5) — homepage hero image
+  about.jpg        1000x1000 (1:1) — About section photo
+                   ^ these four are FIXED filenames on purpose: the admin
+                   panel overwrites them in place, so no code changes are
+                   ever needed when the client swaps an image.
 admin/
   index.html       The custom admin login + dashboard (this is what
                     "the admin panel" refers to — no config.yml needed,
@@ -93,9 +101,9 @@ keeps it in sync with whatever's been edited in the admin panel.
 
 ### What's editable right now vs. not yet
 
-Wired up: Hero text, About text, footer tagline, contact email/phone/
-WhatsApp, all 4 social links, bank + JazzCash details, payment policy
-text, all portfolio project cards (name/category/image — with direct
+Wired up: favicon, header logo, hero image and About photo (with
+auto crop/resize to the exact sizes above), Hero text, About text, footer tagline, contact email/phone/
+WhatsApp, all 4 social links, all portfolio project cards (name/category/image — with direct
 image upload — and alt text), and all 3 pricing tiers (price, features,
 which tier is highlighted, button text).
 
@@ -109,9 +117,22 @@ they're not done yet rather than leaving it
 implied.
 
 
-## Payment & bank details
+## Payment details
 
-Real bank/JazzCash details are printed in plain text in the Payment &
-Terms section of the page. Worth knowing that's publicly visible to
-anyone who views the page source, same as it appears on the rendered
-site.
+Bank / JazzCash details are intentionally **not** on the website or in the
+repo any more — the Terms section just says payment details are sent
+directly once a project is agreed. (Anything committed to `content/*.json`
+is publicly fetchable, so keep sensitive details out of the admin panel.)
+
+## Reviews
+
+No pre-written reviews exist anywhere in the site. The flow is:
+1. A client submits the "Leave A Review" form (Netlify form `client-review`).
+2. Usama gets it by email (set up a Netlify form notification) or sees it
+   under Site configuration -> Forms.
+3. He adds it in the admin panel under **Reviews** (content/reviews.json).
+4. The site shows a scrolling reviews wall plus an average rating computed
+   from those reviews. The section stays hidden while the list is empty.
+
+Reviews are approved by hand on purpose: it keeps spam and fake reviews off
+the site. Rendering is escaped, so pasted text can't inject HTML.
